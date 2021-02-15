@@ -9,8 +9,7 @@ const express = require("express");
 const fs = require('fs');
 
 let app = express();
-//app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
@@ -29,26 +28,25 @@ app.get("/myForm", (req, res) => res.render("pages/myForm"));
 app.post("/myForm", (req, res) => {
   // Add your implementation here \
   let data = req.body.movie;
-  let movies = data.split(',');
+  movies = data.split(',');
+  // if there was data in the text box then render index with the movies
   if (movies){
     res.render('pages/index.ejs',{
       moviesVariable: movies
     })
   }
-  
 });
 
 app.get("/myListQueryString", (req, res) => {
   // Add your implementation here
   // the two movies = movie1 and movie2 in the url query
-  let movies = [req.query.movie1,req.query.movie2];
+  let movie_query = [req.query.movie1,req.query.movie2];
   // if there are movies then render the index page with just the two movies
-  if (movies.length == 2){
+  if (movie_query.length == 2){
     res.render('pages/index.ejs',{
-      moviesVariable: movies
+      moviesVariable: movie_query
     })
   }
-
 });
 
 app.get("/search/:movieName", (req, res) => {
@@ -61,9 +59,9 @@ app.get("/search/:movieName", (req, res) => {
     if (data){
       let movieDesc = ''
       // turn the data into an array of lines
-      movies = data.toString().split('\n');
+      movie_txt = data.toString().split('\n');
       // search the strings for the movieName param
-      movies.forEach((movie)=>{
+      movie_txt.forEach((movie)=>{
         theMovie = movie.split(':');
         // if found, then make the movieDesc the one in the txt file
         if (theMovie[0].toLowerCase() === movieName ){
